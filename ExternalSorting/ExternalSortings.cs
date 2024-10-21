@@ -130,7 +130,7 @@
     public class DirectMergingModified
     {
         private string SourceFile { get; set; }
-        private const long sizeOfMassForSorting = 1310720;
+        private const long sizeOfMassForSorting = 1310720*5;
         private string DestinationFile { get; set; }
         private string helpBFile;
         private string helpCFile;
@@ -147,6 +147,7 @@
         public void Sorting()
         {
             PreventionSorting();
+            GC.Collect();
             for (long i = sizeOfMassForSorting; i < sizeOfFile; i *= 2)
             {
                 SplitFile(i);
@@ -157,10 +158,10 @@
         }
         public void PreventionSorting()
         {
+            List<long> massForSorting = new List<long>();
             using (StreamWriter streamWriter = new StreamWriter(DestinationFile))
             using (StreamReader streamReader = new StreamReader(SourceFile))
             {
-                List<long> massForSorting = new List<long>();
                 while (streamReader.EndOfStream == false)
                 {
                     for (long i = 0; i < sizeOfMassForSorting && streamReader.EndOfStream == false; i++)
@@ -172,9 +173,11 @@
                     {
                         streamWriter.WriteLine(i);
                     }
+                    massForSorting.Clear();
+                    GC.Collect();
                 }
-
             }
+            massForSorting.Clear();
         }
         private void SplitFile(long sizeOfSegment)
         {
