@@ -1,1 +1,1 @@
-External sorting by direct merging algo
+External sorting by direct merging algorithm
